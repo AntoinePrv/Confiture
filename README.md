@@ -1,2 +1,2 @@
 # Confiture
-Fancy Python to manage paramters and configurations
+Fancy Python to manage parameters and configurations.
