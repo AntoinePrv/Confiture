@@ -12,29 +12,18 @@ TODO: make a mode to populate the configuration file
 TODO: make function call that apply to every function paramter: @config ou @config(True)
 TODO: make an identity decorator to deactivate the module
 TODO: make one to read from argparse
+TODO: make a hyerachical naming convention in the config
+TODO: read from multiple configs and merge them
+TODO: do one that apply params but softly aka, after the given arguments, even
+    if positional probably needs inspection of function
+
+NEW NAME: aposteriori
 """
 
-import yaml
-from . import kernel as ker
+from .. import kernel as ker
 
 
-# defaults = {p: CONFIG[p] for p in params if p in CONFIG}
-# func(*args, **{**defaults, **kwargs})
+CONFIG = {}
+NAME = __name__
 
-config = ker.runtime_decorator("config")
-
-
-def set_config(path: str):
-    """Read config from yaml file."""
-    with open(path) as f:
-        conf = yaml.load(f)
-
-    def forced(*params):
-        def _forced(func):
-            def wrapper(*args, **kwargs):
-                defaults = {p: conf[p] for p in params if p in conf}
-                return func(*args, **{**kwargs, **defaults})
-            return wrapper
-        return _forced
-
-    ker.FUNCTIONS["config"] = forced
+config = ker.runtime_decorator(NAME)
