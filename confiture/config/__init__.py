@@ -24,6 +24,20 @@ from .. import kernel as ker
 
 
 CONFIG = {}
-NAME = __name__
 
-config = ker.runtime_decorator(NAME)
+config = ker.runtime_decorator(__name__)
+
+
+def get_config():
+    """Return the global config dictionary."""
+    return CONFIG
+
+
+def disable_config():
+    """Disable config resolution."""
+    del ker.FUNCTIONS[__name__]
+
+
+def enable_config(func):
+    """Enable the config resolution."""
+    ker.FUNCTIONS[__name__] = func

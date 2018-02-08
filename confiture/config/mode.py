@@ -6,8 +6,7 @@ FIXME problem with signature of keywords only....
 
 """
 
-from .. import kernel as ker
-from . import CONFIG, NAME
+from . import CONFIG
 
 
 def forced(*params):
@@ -18,6 +17,3 @@ def forced(*params):
             return func(*args, **{**kwargs, **defaults})
         return wrapper
     return _forced
-
-
-ker.FUNCTIONS[NAME] = forced
