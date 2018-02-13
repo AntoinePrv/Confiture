@@ -15,11 +15,15 @@ import yaml
 CONFIG = {}
 
 
-def set_config(path: str):
+def set_config(path: str, update=False):
     """Read config from yaml file."""
     global CONFIG
     with open(path) as f:
-        CONFIG = yaml.load(f)
+        config = yaml.load(f)
+    if update:
+        CONFIG.update(config)
+    else:
+        CONFIG = config
 
 
 def config(*params):
