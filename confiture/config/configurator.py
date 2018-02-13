@@ -1,34 +1,75 @@
 # coding: utf-8
 
-from . import CONFIG, enable_config
+"""Configurator module.
+
+Aims at configuring the values in the global config of the module `config` as
+well as how they are used.
+
+"""
+
+from .config import _get_config, _set_config, _set_resolve
+from . import resolver
 
 
 class Configure(object):
+    """Configure class.
 
-    def __init__(self, config):
+    The class is used to define a behaviour for the module `config`. The class
+    is used in a imutable fashion, returning new objects.
+    The class is lazy and doesn't change anything until a action method is
+    called, namely
+        - `set` sets the global configuration erasing previous behaviour.
+        - `update` only updates the global configuration with new information
+        leaving other states unchanged.
+
+    Attributes
+    ----------
+    __config : dict
+        Holds a configuration ready to be pushed to the module level
+        configuration.
+    __mode : str
+        Mode is the way the module decorator apply the values of the
+        global configuration to other functions.
+
+    """
+
+    __modes_to_resolver = {
+        "defaults": resolver.defaults_changer,
+        "override": resolver.signature_changer
+    }
+
+    @classmethod
+    def _avail_modes(klass):
+        return klass.__modes_to_resolver.keys()
+
+    @classmethod
+    def _resolve_mode(klass, mode):
+        return klass.__modes_to_resolver.get(mode, resolver.defaults_changer)
+
+    def __init__(self, config, mode=None):
         """Initialize Config."""
         self.__config = config
-        self.__mode = None
+        available_modes = Configure._avail_modes()
+        if mode is not None and mode not in available_modes:
+            raise ValueError(f"Undefined mode: {mode}.\n"
+                             f"Use one of {available_modes}.")
+        else:
+            self.__mode = mode
 
     def mode(self, new_mode):
         """Change mode."""
-        return self.__class__(self.__config, new_mode)
+        return Configure(self.__config, new_mode)
 
     def set(self):
         """Set as new configuration."""
-        global CONFIG
-        CONFIG = self.__config
-        if self.__mode is not None:
-            raise NotImplementedError()
-        else:
-            # We need to set a default mode here
-            raise NotImplementedError()
+        _set_config(self.__config)
+        _set_resolve(Configure._resolve_mode(self.__mode))
 
     def update(self):
         """Update the configuration with these values."""
-        CONFIG.update(self.__config)
+        _get_config().update(self.__config)
         if self.__mode is not None:
-            raise NotImplementedError()
+            _set_resolve(Configure._resolve_mode(self.__mode))
 
     @classmethod
     def from_kwargs(klass, **kwargs):
