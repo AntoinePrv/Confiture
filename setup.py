@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 setup(
     name='Confiture',
     version='0.1',
-    packages=['confiture'],
+    packages=find_packages(),
     license='MIT',
     long_description=open('README.md').read(),
 )
